@@ -5,7 +5,9 @@ class SongContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      songs: []
+      songs: [],
+      updatedDate: '',
+      updatedTime: ''
     };
   }
 
@@ -19,15 +21,20 @@ class SongContainer extends Component {
       }
       const jsonString = request.responseText;
       const data = JSON.parse(jsonString);
-      this.setState({songs: data.feed.entry});
+      const formattedDate = data.feed.updated.label.slice(0, 10);
+      const formattedTime = data.feed.updated.label.slice(11, 19);
+      this.setState({songs: data.feed.entry, updatedDate: formattedDate, updatedTime: formattedTime});
     });
     request.send();
   }
+
+// 2019-01-15T09:08:20-07:00
 
   render() {
     return(
       <Fragment>
         <h1>iTunes Top 20</h1>
+        <h3>Last updated on: {this.state.updatedDate} at {this.state.updatedTime}</h3>
         <SongList songs={this.state.songs}/>
       </Fragment>
     )
